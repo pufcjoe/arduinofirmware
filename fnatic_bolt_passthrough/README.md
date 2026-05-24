@@ -31,6 +31,29 @@ The Leonardo reads raw HID reports from the Bolt via the Host Shield and re-tran
 4. Flash the sketch.
 5. Plug the Fnatic Bolt into the USB Host Shield's USB-A port.
 
+## USB Device Spoofing (optional)
+
+To make the Leonardo report itself to the PC with the Fnatic Bolt's VID, PID, manufacturer, and product strings:
+
+1. Copy `boards.local.txt` from the repo root to your Arduino AVR core directory:
+   ```
+   %LOCALAPPDATA%\Arduino15\packages\arduino\hardware\avr\<version>\
+   ```
+2. Restart the Arduino IDE.
+3. Select **Board: Arduino Leonardo (Fnatic Bolt)** instead of the regular Leonardo.
+4. Flash the sketch.
+
+The PC will now see the Leonardo as:
+
+| Field        | Value |
+|--------------|-------|
+| VID          | `0x2F0E` |
+| PID          | `0x0203` |
+| Manufacturer | `Fnatic Gear` |
+| Product      | `BOLT Wireless Gaming Mouse` |
+
+The bootloader VID/PID remains unchanged, so uploads still work normally.
+
 ## Debugging
 
 To inspect raw HID reports:

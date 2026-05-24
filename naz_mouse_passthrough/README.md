@@ -31,6 +31,29 @@ The Leonardo reads raw HID reports from the Naz mouse via the Host Shield and re
 4. Flash the sketch.
 5. Plug the Naz mouse into the USB Host Shield's USB-A port.
 
+## USB Device Spoofing (optional)
+
+To make the Leonardo report itself to the PC with the G PRO X Superlight's VID, PID, manufacturer, and product strings:
+
+1. Copy `boards.local.txt` from the repo root to your Arduino AVR core directory:
+   ```
+   %LOCALAPPDATA%\Arduino15\packages\arduino\hardware\avr\<version>\
+   ```
+2. Restart the Arduino IDE.
+3. Select **Board: Arduino Leonardo (G PRO X Superlight)** instead of the regular Leonardo.
+4. Flash the sketch.
+
+The PC will now see the Leonardo as:
+
+| Field        | Value |
+|--------------|-------|
+| VID          | `0x046D` |
+| PID          | `0xC547` |
+| Manufacturer | `Logitech` |
+| Product      | `PRO X Superlight Wireless Gaming Mouse` |
+
+The bootloader VID/PID remains unchanged, so uploads still work normally.
+
 ## Debugging
 
 To inspect raw HID reports:
