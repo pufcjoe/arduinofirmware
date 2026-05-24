@@ -5,6 +5,10 @@
  * Host Shield and re-sends them to the PC through the Leonardo's native USB
  * as a 16-bit-axis HID mouse.
  *
+ * VID/PID spoofing: handled via boards.local.txt in the project root.
+ * Select the "Arduino Leonardo (Fnatic Bolt)" board in the IDE.
+ * The build system injects USB_VID, USB_PID, and USB_PRODUCT from there.
+ *
  * Dependencies (install via Arduino Library Manager):
  *   - USB Host Shield Library 2.0
  *
@@ -12,8 +16,8 @@
  *
  * First run: open Serial Monitor at 115200. Set DEBUG_RAW to 1 below.
  * Plug in the Bolt. You'll see hex dumps of every report — use those to
- * confirm the byte layout matches REPORT_LEN_16BIT (6-byte: buttons/x16/y16/wheel)
- * or REPORT_LEN_BOOT (4-byte: buttons/x8/y8/wheel). If it doesn't match, adjust
+ * confirm the byte layout matches the 6-byte layout (8 buttons/x16/y16/wheel)
+ * or 4-byte boot protocol (buttons/x8/y8/wheel). If it doesn't match, adjust
  * the parse logic in MouseParser::Parse().
  *
  * Once confirmed, set DEBUG_RAW to 0 and re-flash for minimum latency.
@@ -31,7 +35,7 @@
 #define SERIAL_BAUD     115200
 #define MOUSE_REPORT_ID 1
 
-// ── Output HID descriptor: 5 buttons, 16-bit X/Y, 8-bit wheel ─────────────
+// ── Output HID descriptor: 8 buttons, 16-bit X/Y, 8-bit wheel ──────────────
 
 static const uint8_t kMouseDesc[] PROGMEM = {
   0x05, 0x01,              // Usage Page (Generic Desktop)
@@ -41,19 +45,15 @@ static const uint8_t kMouseDesc[] PROGMEM = {
   0x09, 0x01,              //   Usage (Pointer)
   0xA1, 0x00,              //   Collection (Physical)
 
-  // 5 buttons
+  // 8 buttons
   0x05, 0x09,              //     Usage Page (Buttons)
   0x19, 0x01,              //     Usage Minimum (1)
-  0x29, 0x05,              //     Usage Maximum (5)
+  0x29, 0x08,              //     Usage Maximum (8)
   0x15, 0x00,              //     Logical Minimum (0)
   0x25, 0x01,              //     Logical Maximum (1)
-  0x95, 0x05,              //     Report Count (5)
+  0x95, 0x08,              //     Report Count (8)
   0x75, 0x01,              //     Report Size (1)
   0x81, 0x02,              //     Input (Data, Variable, Absolute)
-  // 3-bit padding
-  0x95, 0x01,              //     Report Count (1)
-  0x75, 0x03,              //     Report Size (3)
-  0x81, 0x01,              //     Input (Constant)
 
   // X and Y — 16-bit signed relative
   0x05, 0x01,              //     Usage Page (Generic Desktop)
@@ -81,7 +81,7 @@ static const uint8_t kMouseDesc[] PROGMEM = {
 
 #pragma pack(push, 1)
 struct MouseReport {
-  uint8_t buttons;
+  uint8_t buttons;    // 8 buttons
   int16_t x;
   int16_t y;
   int8_t  wheel;
@@ -125,14 +125,20 @@ void MouseParser::Parse(USBHID * /* hid */, bool is_rpt_id,
   uint8_t *d   = buf;
   uint8_t  dLen = len;
 
-  // The library may pass the report-ID byte as buf[0]; skip it.
+  if (!is_rpt_id && dLen > 0 && (buf[0] == 0x10 || buf[0] == 0x11)) return;
+
   if (is_rpt_id && dLen > 0) {
     d++;
     dLen--;
   }
 
 #if DEBUG_RAW
-  Serial.print(F("RPT["));
+  Serial.print(F("id="));
+  Serial.print(is_rpt_id);
+  Serial.print(F(" b0=0x"));
+  if (buf[0] < 0x10) Serial.print('0');
+  Serial.print(buf[0], HEX);
+  Serial.print(F(" ["));
   Serial.print(dLen);
   Serial.print(F("]: "));
   for (uint8_t i = 0; i < dLen; i++) {
@@ -144,10 +150,11 @@ void MouseParser::Parse(USBHID * /* hid */, bool is_rpt_id,
 #endif
 
   MouseReport rpt = {0, 0, 0, 0};
+  static uint8_t prev_buttons = 0;
 
   if (dLen >= 6) {
     // 16-bit X/Y layout (expected for the Bolt at high polling rate)
-    // [buttons:8] [x_lo:8] [x_hi:8] [y_lo:8] [y_hi:8] [wheel:8]
+    // [buttons:8 (8 buttons)] [x_lo:8] [x_hi:8] [y_lo:8] [y_hi:8] [wheel:8]
     rpt.buttons = d[0];
     rpt.x       = (int16_t)((uint16_t)d[1] | ((uint16_t)d[2] << 8));
     rpt.y       = (int16_t)((uint16_t)d[3] | ((uint16_t)d[4] << 8));
@@ -160,8 +167,12 @@ void MouseParser::Parse(USBHID * /* hid */, bool is_rpt_id,
     rpt.y       = (int8_t)d[2];
     rpt.wheel   = (int8_t)d[3];
   } else {
-    return; // too short — probably a vendor-specific report; ignore
+    return;
   }
+
+  if (rpt.x == 0 && rpt.y == 0 && rpt.wheel == 0
+      && rpt.buttons == prev_buttons) return;
+  prev_buttons = rpt.buttons;
 
   sendMouseReport(&rpt);
 }
@@ -199,7 +210,8 @@ void setup() {
 #endif
 }
 
+// No delay() in loop — Usb.Task() polls the host shield as fast as possible
+// to minimise polling latency.
 void loop() {
   Usb.Task();
-
 }
