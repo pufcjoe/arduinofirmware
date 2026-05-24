@@ -1,0 +1,95 @@
+##############################################################
+# Leonardo spoofed as Fnatic Bolt
+##############################################################
+
+leonardo_bolt.name=Arduino Leonardo (Fnatic Bolt)
+
+# Bootloader IDs stay as Leonardo so uploads still work
+leonardo_bolt.vid.0=0x2341
+leonardo_bolt.pid.0=0x0036
+leonardo_bolt.vid.1=0x2341
+leonardo_bolt.pid.1=0x8036
+leonardo_bolt.upload_port.0.vid=0x2341
+leonardo_bolt.upload_port.0.pid=0x0036
+leonardo_bolt.upload_port.1.vid=0x2341
+leonardo_bolt.upload_port.1.pid=0x8036
+leonardo_bolt.upload_port.2.board=leonardo_bolt
+
+leonardo_bolt.upload.tool=avrdude
+leonardo_bolt.upload.tool.default=avrdude
+leonardo_bolt.upload.tool.network=arduino_ota
+leonardo_bolt.upload.protocol=avr109
+leonardo_bolt.upload.maximum_size=28672
+leonardo_bolt.upload.maximum_data_size=2560
+leonardo_bolt.upload.speed=57600
+leonardo_bolt.upload.disable_flushing=true
+leonardo_bolt.upload.use_1200bps_touch=true
+leonardo_bolt.upload.wait_for_upload_port=true
+
+leonardo_bolt.bootloader.tool=avrdude
+leonardo_bolt.bootloader.tool.default=avrdude
+leonardo_bolt.bootloader.low_fuses=0xff
+leonardo_bolt.bootloader.high_fuses=0xd8
+leonardo_bolt.bootloader.extended_fuses=0xcb
+leonardo_bolt.bootloader.file=caterina/Caterina-Leonardo.hex
+leonardo_bolt.bootloader.unlock_bits=0x3F
+leonardo_bolt.bootloader.lock_bits=0x2F
+
+leonardo_bolt.build.mcu=atmega32u4
+leonardo_bolt.build.f_cpu=16000000L
+leonardo_bolt.build.vid=0x2F0E
+leonardo_bolt.build.pid=0x0203
+leonardo_bolt.build.usb_product="BOLT Wireless Gaming Mouse"
+leonardo_bolt.build.usb_manufacturer="Fnatic Gear"
+leonardo_bolt.build.board=AVR_LEONARDO
+leonardo_bolt.build.core=arduino
+leonardo_bolt.build.variant=leonardo
+leonardo_bolt.build.extra_flags={build.usb_flags}
+
+##############################################################
+# Leonardo spoofed as Logitech G PRO X Superlight
+##############################################################
+
+leonardo_gpxsl.name=Arduino Leonardo (G PRO X Superlight)
+
+# Bootloader IDs stay as Leonardo so uploads still work
+leonardo_gpxsl.vid.0=0x2341
+leonardo_gpxsl.pid.0=0x0036
+leonardo_gpxsl.vid.1=0x2341
+leonardo_gpxsl.pid.1=0x8036
+leonardo_gpxsl.upload_port.0.vid=0x2341
+leonardo_gpxsl.upload_port.0.pid=0x0036
+leonardo_gpxsl.upload_port.1.vid=0x2341
+leonardo_gpxsl.upload_port.1.pid=0x8036
+leonardo_gpxsl.upload_port.2.board=leonardo_gpxsl
+
+leonardo_gpxsl.upload.tool=avrdude
+leonardo_gpxsl.upload.tool.default=avrdude
+leonardo_gpxsl.upload.tool.network=arduino_ota
+leonardo_gpxsl.upload.protocol=avr109
+leonardo_gpxsl.upload.maximum_size=28672
+leonardo_gpxsl.upload.maximum_data_size=2560
+leonardo_gpxsl.upload.speed=57600
+leonardo_gpxsl.upload.disable_flushing=true
+leonardo_gpxsl.upload.use_1200bps_touch=true
+leonardo_gpxsl.upload.wait_for_upload_port=true
+
+leonardo_gpxsl.bootloader.tool=avrdude
+leonardo_gpxsl.bootloader.tool.default=avrdude
+leonardo_gpxsl.bootloader.low_fuses=0xff
+leonardo_gpxsl.bootloader.high_fuses=0xd8
+leonardo_gpxsl.bootloader.extended_fuses=0xcb
+leonardo_gpxsl.bootloader.file=caterina/Caterina-Leonardo.hex
+leonardo_gpxsl.bootloader.unlock_bits=0x3F
+leonardo_gpxsl.bootloader.lock_bits=0x2F
+
+leonardo_gpxsl.build.mcu=atmega32u4
+leonardo_gpxsl.build.f_cpu=16000000L
+leonardo_gpxsl.build.vid=0x046D
+leonardo_gpxsl.build.pid=0xC547
+leonardo_gpxsl.build.usb_product="PRO X Superlight Wireless Gaming Mouse"
+leonardo_gpxsl.build.usb_manufacturer="Logitech"
+leonardo_gpxsl.build.board=AVR_LEONARDO
+leonardo_gpxsl.build.core=arduino
+leonardo_gpxsl.build.variant=leonardo
+leonardo_gpxsl.build.extra_flags={build.usb_flags}
