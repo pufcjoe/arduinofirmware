@@ -93,3 +93,65 @@ leonardo_gpxsl.build.board=AVR_LEONARDO
 leonardo_gpxsl.build.core=arduino
 leonardo_gpxsl.build.variant=leonardo
 leonardo_gpxsl.build.extra_flags={build.usb_flags}
+
+##############################################################
+# Leonardo spoofed as DELL Laser Mouse (1:1 match)
+#
+# Real device descriptors (dumped from hardware):
+#   bcdUSB=0x0200  bDeviceClass=0  bMaxPacketSize0=8
+#   VID=0x0461  PID=0x4D51  bcdDevice=0x0717
+#   iManufacturer=0 (none)  iProduct=2 ("DELL Laser Mouse")
+#   iSerialNumber=0 (none)
+#   bmAttributes=0xA0 (bus-powered, remote wakeup)
+#   MaxPower=100mA
+#   Interface: Class=3 SubClass=1(Boot) Protocol=2(Mouse)
+#   HID: bcdHID=0x0111  ReportDescLen=64
+#   Endpoint: IN 0x81  Interrupt  wMaxPacketSize=5  bInterval=10
+#
+# CDC is disabled so the PC sees a pure HID device.
+# To re-flash: double-tap the Leonardo reset button.
+##############################################################
+
+leonardo_dell.name=Arduino Leonardo (DELL Laser Mouse)
+
+# Bootloader IDs stay as Leonardo so uploads still work
+leonardo_dell.vid.0=0x2341
+leonardo_dell.pid.0=0x0036
+leonardo_dell.vid.1=0x2341
+leonardo_dell.pid.1=0x8036
+leonardo_dell.upload_port.0.vid=0x2341
+leonardo_dell.upload_port.0.pid=0x0036
+leonardo_dell.upload_port.1.vid=0x2341
+leonardo_dell.upload_port.1.pid=0x8036
+leonardo_dell.upload_port.2.board=leonardo_dell
+
+leonardo_dell.upload.tool=avrdude
+leonardo_dell.upload.tool.default=avrdude
+leonardo_dell.upload.tool.network=arduino_ota
+leonardo_dell.upload.protocol=avr109
+leonardo_dell.upload.maximum_size=28672
+leonardo_dell.upload.maximum_data_size=2560
+leonardo_dell.upload.speed=57600
+leonardo_dell.upload.disable_flushing=true
+leonardo_dell.upload.use_1200bps_touch=true
+leonardo_dell.upload.wait_for_upload_port=true
+
+leonardo_dell.bootloader.tool=avrdude
+leonardo_dell.bootloader.tool.default=avrdude
+leonardo_dell.bootloader.low_fuses=0xff
+leonardo_dell.bootloader.high_fuses=0xd8
+leonardo_dell.bootloader.extended_fuses=0xcb
+leonardo_dell.bootloader.file=caterina/Caterina-Leonardo.hex
+leonardo_dell.bootloader.unlock_bits=0x3F
+leonardo_dell.bootloader.lock_bits=0x2F
+
+leonardo_dell.build.mcu=atmega32u4
+leonardo_dell.build.f_cpu=16000000L
+leonardo_dell.build.vid=0x0461
+leonardo_dell.build.pid=0x4D51
+leonardo_dell.build.usb_product="DELL Laser Mouse"
+leonardo_dell.build.usb_manufacturer=""
+leonardo_dell.build.board=AVR_LEONARDO
+leonardo_dell.build.core=arduino
+leonardo_dell.build.variant=leonardo
+leonardo_dell.build.extra_flags={build.usb_flags} -DCDC_DISABLED -DUSB_DEVICE_VERSION=0x0717 -DIMANUFACTURER=0 -DISERIAL=0 -DUSB_CONFIG_POWER=100 -DHID_INTERFACE_SUBCLASS=1 -DHID_INTERFACE_PROTOCOL=2 -DHID_ENDPOINT_INTERVAL=0x0A -DHID_ENDPOINT_SIZE=5 -DHID_BCD_VERSION_L=0x11 -DHID_BCD_VERSION_H=0x01
