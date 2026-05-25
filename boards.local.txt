@@ -1,5 +1,23 @@
 ##############################################################
-# Leonardo spoofed as Fnatic Bolt
+# Leonardo spoofed as Fnatic Bolt (1:1 mouse interface match)
+#
+# Real device descriptors (dumped from hardware):
+#   bcdUSB=0x0200  bDeviceClass=0 (composite)
+#   VID=0x2F0E  PID=0x0203  bcdDevice=0x0100
+#   iManufacturer=1 ("Fnatic Gear")
+#   iProduct=2 ("FNATIC BOLT Mouse")
+#   iSerialNumber=3 ("000000000000")
+#   bmAttributes=0xE0 (self-powered, remote wakeup)
+#   MaxPower=100mA
+#   Interface 0: Class=3 SubClass=1(Boot) Protocol=2(Mouse)
+#     HID bcdHID=0x0111  ReportDescLen=73
+#     Endpoint IN 0x81  maxPkt=64  interval=1
+#   Interface 1: Class=3 SubClass=1 Protocol=0 (vendor)
+#   Interface 2: Class=3 SubClass=1 Protocol=1 (keyboard)
+#
+# This board definition matches the mouse interface (IF0).
+# CDC is disabled so the PC sees a pure HID device.
+# To re-flash: double-tap the Leonardo reset button.
 ##############################################################
 
 leonardo_bolt.name=Arduino Leonardo (Fnatic Bolt)
@@ -44,7 +62,7 @@ leonardo_bolt.build.usb_manufacturer="Fnatic Gear"
 leonardo_bolt.build.board=AVR_LEONARDO
 leonardo_bolt.build.core=arduino
 leonardo_bolt.build.variant=leonardo
-leonardo_bolt.build.extra_flags={build.usb_flags}
+leonardo_bolt.build.extra_flags={build.usb_flags} -DCDC_DISABLED -DUSB_CONFIG_POWER=100 -DUSB_CONFIG_ATTRS=0xE0 -DHID_INTERFACE_SUBCLASS=1 -DHID_INTERFACE_PROTOCOL=2 -DHID_ENDPOINT_INTERVAL=0x01 -DHID_ENDPOINT_SIZE=64 -DHID_BCD_VERSION_L=0x11 -DHID_BCD_VERSION_H=0x01
 
 ##############################################################
 # Leonardo spoofed as Logitech G PRO X Superlight
